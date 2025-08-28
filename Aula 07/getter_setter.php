@@ -71,3 +71,5 @@
  $aluno1 = new pessoa("BeAtriZ dos sAnToS", "123.456.789-00", "(19) 99999-9999", -20, "teste@gmail.com", "teste123");
 
  echo $aluno1->getNome();
+
+ 
