@@ -63,7 +63,7 @@
     }
 
     public function exibirInfor(){
-        return "nome do aluno: . $this-> Nome(). \n cpf: .$this->cpf(). \n telefone: .$this->telefone(). \n idade: .$this->idade().\n email: .$this->email\n senha: .$this->senha";
+        return "nome do aluno:  $this->nome \n cpf: $this->cpf \n telefone: $this->telefone\n idade: $this->idade\n email: $this->email\n senha: $this->senha";
     }
 
  }
