@@ -2,6 +2,7 @@
 
 Cenário 6 – Leia o enunciado do problema
 "Um sistema de cinema deve permitir que clientes comprem ingressos para sessões de filmes."
+
 <?php
 class Cliente {
     private $nome;
@@ -12,6 +13,10 @@ class Cliente {
 
     public function getNome() {
         return $this->nome;
+    }
+
+    public function setNome($nome) {
+        $this->nome = $nome;
     }
 }
 
@@ -24,6 +29,10 @@ class Filme {
 
     public function getTitulo() {
         return $this->titulo;
+    }
+
+    public function setTitulo($titulo) {
+        $this->titulo = $titulo;
     }
 }
 
@@ -40,8 +49,16 @@ class Sessao {
         return $this->filme;
     }
 
+    public function setFilme(Filme $filme) {
+        $this->filme = $filme;
+    }
+
     public function getHorario() {
         return $this->horario;
+    }
+
+    public function setHorario($horario) {
+        $this->horario = $horario;
     }
 }
 
@@ -51,6 +68,22 @@ class Ingresso {
 
     public function __construct(Cliente $cliente, Sessao $sessao) {
         $this->cliente = $cliente;
+        $this->sessao = $sessao;
+    }
+
+    public function getCliente() {
+        return $this->cliente;
+    }
+
+    public function setCliente(Cliente $cliente) {
+        $this->cliente = $cliente;
+    }
+
+    public function getSessao() {
+        return $this->sessao;
+    }
+
+    public function setSessao(Sessao $sessao) {
         $this->sessao = $sessao;
     }
 

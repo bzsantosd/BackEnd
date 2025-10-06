@@ -6,31 +6,47 @@ fazer treinamentos especiais no Cotil e, depois, irão ao shopping para doar
 brinquedos às crianças. -->
 
 <?php
-class Heróis {
-    public $missão;
-    public function __construct($missão) {
-        $this->missão = $missão;
+class Herois {
+    private $missao;
+
+    public function __construct($missao) {
+        $this->missao = $missao;
     }
-    public function treinar(){
-        echo "Foi Treinamento especial no $this->missão\n";
+
+    public function getMissao() {
+        return $this->missao;
+    }
+
+    public function setMissao($missao) {
+        $this->missao = $missao;
+    }
+
+    public function treinar() {
+        echo "Foi Treinamento especial no {$this->missao}\n";
     }
 }
-class Lugar {
 
-    public $ambiente;
+class Lugar {
+    private $ambiente;
+
     public function __construct($ambiente) {
         $this->ambiente = $ambiente;
     }
 
-    public function ação(){
-        echo "depois ao $this->ambiente para doar brinquedos às crianças\n";
+    public function getAmbiente() {
+        return $this->ambiente;
     }
-    
+
+    public function setAmbiente($ambiente) {
+        $this->ambiente = $ambiente;
+    }
+
+    public function acao() {
+        echo "depois ao {$this->ambiente} para doar brinquedos às crianças\n";
+    }
 }
 
-
-$missão = new Heróis("Cotil");
-$missão->treinar();
-$Lugar = new Lugar("shopping");
-$Lugar->ação();
-
+$missao = new Herois("Cotil");
+$missao->treinar();
+$lugar = new Lugar("shopping");
+$lugar->acao();

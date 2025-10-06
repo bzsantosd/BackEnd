@@ -4,7 +4,6 @@ Cenário 3 – Fantasia e Destino
 John Snow, Papai Smurf, Deadpool e Dexter estão em uma jornada. Durante o
 caminho, começa a chover, e eles precisam amar uns aos outros para superar as
 dificuldades. No fim da jornada, eles celebram ao comer juntos. -->
-
 <?php
 class Personagens {
     private $personagens;
@@ -16,31 +15,69 @@ class Personagens {
     public function todos() {
         return implode(", ", $this->personagens);
     }
+
+    // Getter
+    public function getPersonagens() {
+        return $this->personagens;
+    }
+
+    // Setter
+    public function setPersonagens(array $novosPersonagens) {
+        $this->personagens = $novosPersonagens;
+    }
 }
 
 class Jornada {
-    
+    private $personagens;
+
+    public function __construct() {
+        $this->personagens = new Personagens(["John Snow", "Papai Smurf", "Deadpool", "Dexter"]);
+    }
+
+    // Getter
+    public function getPersonagens() {
+        return $this->personagens;
+    }
+
+    // Setter
+    public function setPersonagens(Personagens $personagens) {
+        $this->personagens = $personagens;
+    }
+
     public function iniciarJornada() {
-        $personagens = new Personagens(["John Snow", "Papai Smurf", "Deadpool", "Dexter"]);
-        echo "{$personagens->todos()} iniciaram a jornada.\n";
+        echo "{$this->personagens->todos()} iniciaram a jornada.\n";
     }
 
     public function chuvaESuperacao() {
-        $personagens = new Personagens(["John Snow", "Papai Smurf", "Deadpool", "Dexter"]);
         $clima = new Clima();
         $clima->chuva();
-        echo "{$personagens->todos()} se amam e superam as dificuldades juntos.\n";
+        echo "{$this->personagens->todos()} se amam e superam as dificuldades juntos.\n";
     }
 
     public function celebrar() {
-        $personagens = new Personagens(["John Snow", "Papai Smurf", "Deadpool", "Dexter"]);
-        echo "No fim da jornada, {$personagens->todos()} celebram comendo juntos.\n";
+        echo "No fim da jornada, {$this->personagens->todos()} celebram comendo juntos.\n";
     }
 }
 
 class Clima {
+    private $estado;
+
+    public function __construct() {
+        $this->estado = "seco";
+    }
+
+    // Getter
+    public function getEstado() {
+        return $this->estado;
+    }
+
+    // Setter
+    public function setEstado($estado) {
+        $this->estado = $estado;
+    }
 
     public function chuva() {
+        $this->estado = "chuvoso";
         echo "Começou a chover!\n";
     }
 }

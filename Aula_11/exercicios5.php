@@ -17,8 +17,16 @@ class Usuario {
         return $this->nome;
     }
 
+    public function setNome($nome) {
+        $this->nome = $nome;
+    }
+
     public function getTipo() {
         return $this->tipo;
+    }
+
+    public function setTipo($tipo) {
+        $this->tipo = $tipo;
     }
 }
 
@@ -35,8 +43,16 @@ class ItemBiblioteca {
         return $this->titulo;
     }
 
+    public function setTitulo($titulo) {
+        $this->titulo = $titulo;
+    }
+
     public function getTipo() {
         return $this->tipo;
+    }
+
+    public function setTipo($tipo) {
+        $this->tipo = $tipo;
     }
 }
 
@@ -46,6 +62,22 @@ class Emprestimo {
 
     public function __construct(Usuario $usuario, ItemBiblioteca $item) {
         $this->usuario = $usuario;
+        $this->item = $item;
+    }
+
+    public function getUsuario() {
+        return $this->usuario;
+    }
+
+    public function setUsuario(Usuario $usuario) {
+        $this->usuario = $usuario;
+    }
+
+    public function getItem() {
+        return $this->item;
+    }
+
+    public function setItem(ItemBiblioteca $item) {
         $this->item = $item;
     }
 
