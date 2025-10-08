@@ -5,7 +5,7 @@ John Snow, Papai Smurf, Deadpool e Dexter estão em uma jornada. Durante o
 caminho, começa a chover, e eles precisam amar uns aos outros para superar as
 dificuldades. No fim da jornada, eles celebram ao comer juntos.
 
-COMPOSIÇÃO-->
+ASSOCIAÇÃO-->
 
 <?php
 class Personagens {
