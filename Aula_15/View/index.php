@@ -1,0 +1,55 @@
+<?php
+
+namespace Aula_15;
+require_once __DIR__. '\\..\\Controller\\BebidaController.php';
+$controller = new BebidaController();
+
+if ($_SERVER ['REQUEST_METHOD'] === 'POST'){
+    $acao = $_POST['acao'] ?? '';
+    if ($acao === 'criar'){
+        $controller->criar(
+            $_POST['nome'],
+            $_POST['categoria'],
+            $_POST['Volume'],
+            $_POST['Valor'],
+            $_POST['qtde']
+        );
+    } elseif ($acao === 'deletar'){
+        $controller->deletar($_POST['nome']);
+    }
+}
+$bebidas = $controller->ler();
+
+//confirtmação de formulário
+?>
+<!-- Formulario de html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Bebidas</title>
+</head>
+<body>
+    <h1>Formulário para preencimento de Bebidas</h1>
+    <form method="POST">
+    <input type="hidden" name="acao" value="criar">
+    <input type="text" name="nome" placeholder="Nome de bebida:" required>
+    <select name="categoria" required>
+        <option value="">Selecione a Categoria</option>
+        <option value="Refrigerante">Refrigerante</option>
+        <option value="Cerveja">Cerveja</option>
+        <option value="Vinho">Vinho</option>
+        <option value="Destilado">Destilado</option>
+        <option value="Água">Água</option>
+        <option value="Suco">Suco</option>
+        <option value="Energético">Energético</option>
+    </select>
+    <input type="text" name="Volume" placeholder="Volume (ex:300ml):" required>
+    <input type="number" name="Valor" step="0.01" placeholder="Valor em Reais (R$):" required>
+    <input type="number" name="qtde" placeholder="Quatidade em estoque:" required>
+    <ibutton type="submit">Cadastrar</ibutton>
+    </form>
+
+</body>
+</html>
