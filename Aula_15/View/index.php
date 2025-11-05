@@ -48,7 +48,8 @@ $bebidas = $controller->ler();
     <input type="text" name="Volume" placeholder="Volume (ex:300ml):" required>
     <input type="number" name="Valor" step="0.01" placeholder="Valor em Reais (R$):" required>
     <input type="number" name="qtde" placeholder="Quatidade em estoque:" required>
-    <ibutton type="submit">Cadastrar</ibutton>
+    <button type="submit" style="padding: 10px 20px; background-color: offwhite; color: black; border: none; border-radius: 4px; cursor: pointer;">Cadastrar</button>
+
     </form>
 
 </body>

@@ -1,0 +1,9 @@
+{
+    "coca": {
+        "nome": "coca",
+        "categoria": "Refrigerante",
+        "volume": "500",
+        "valor": "10.99",
+        "qtde": "2"
+    }
+}
