@@ -2,8 +2,8 @@
     "coca": {
         "nome": "coca",
         "categoria": "Refrigerante",
-        "volume": "500",
-        "valor": "10.99",
-        "qtde": "2"
+        "volume": "300",
+        "valor": "15.99",
+        "qtde": "3"
     }
 }

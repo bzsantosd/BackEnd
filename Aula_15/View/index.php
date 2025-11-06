@@ -20,9 +20,8 @@ if ($_SERVER ['REQUEST_METHOD'] === 'POST'){
 }
 $bebidas = $controller->ler();
 
-//confirtmação de formulário
 ?>
-<!-- Formulario de html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,9 +47,40 @@ $bebidas = $controller->ler();
     <input type="text" name="Volume" placeholder="Volume (ex:300ml):" required>
     <input type="number" name="Valor" step="0.01" placeholder="Valor em Reais (R$):" required>
     <input type="number" name="qtde" placeholder="Quatidade em estoque:" required>
-    <button type="submit" style="padding: 10px 20px; background-color: offwhite; color: black; border: none; border-radius: 4px; cursor: pointer;">Cadastrar</button>
-
+    <?php
+    echo '<button type="submit" style="padding: 10px 20px; background-color: green; color: black; border: none; border-radius: 4px; cursor: pointer;">Cadastrar</button>';
+    ?>
     </form>
-
+    <h2>Bebidas Cadastradas</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Volume</th>
+                <th>Valor</th>
+                <th>Quantidade</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($bebidas as $bebida): ?>
+            <tr>
+                <td><?php echo htmlspecialchars($bebida->getNome()); ?></td>
+                <td><?php echo htmlspecialchars($bebida->getCategoria()); ?></td>
+                <td><?php echo htmlspecialchars($bebida->getVolume()); ?></td>
+                <td>R$ <?php echo number_format($bebida->getValor(), 2, ',', '.'); ?></td>
+                <td><?php echo htmlspecialchars($bebida->getQtde()); ?></td>
+                <td>
+                    <form method="POST" style="display: inline;">
+                        <input type="hidden" name="acao" value="deletar">
+                        <input type="hidden" name="nome" value="<?php echo htmlspecialchars($bebida->getNome()); ?>">
+                        <button type="submit" style="background-color: green; border-radius: 4px; cursor: pointer;">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 </body>
 </html>
