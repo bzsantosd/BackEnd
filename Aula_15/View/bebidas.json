@@ -1,16 +1,44 @@
 {
-    "coca": {
-        "nome": "coca",
+    "Coca-Cola": {
+        "nome": "Coca-Cola",
         "categoria": "Refrigerante",
-        "volume": "300",
-        "valor": "15.99",
-        "qtde": "3"
+        "volume": "2,5L",
+        "valor": "10.99",
+        "qtde": "679"
     },
-    "Lim\u00e3o": {
-        "nome": "Lim\u00e3o",
+    "Monster": {
+        "nome": "Monster",
+        "categoria": "Energético",
+        "volume": "300",
+        "valor": "17.67",
+        "qtde": "55"
+    },
+    "Limão": {
+        "nome": "Limão",
         "categoria": "Suco",
         "volume": "500",
-        "valor": "25.99",
-        "qtde": "7"
+        "valor": "23.99",
+        "qtde": "45"
+    },
+    "Água Saborizada": {
+        "nome": "Água Saborizada",
+        "categoria": "Água",
+        "volume": "500",
+        "valor": "3.99",
+        "qtde": "1000"
+    },
+    "Maracujá": {
+        "nome": "Maracujá",
+        "categoria": "Suco",
+        "volume": "1L",
+        "valor": "34.76",
+        "qtde": "89"
+    },
+    "Skol": {
+        "nome": "Skol",
+        "categoria": "Cerveja",
+        "volume": "2L",
+        "valor": "50.00",
+        "qtde": "68"
     }
 }
