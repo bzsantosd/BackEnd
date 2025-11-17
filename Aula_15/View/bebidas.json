@@ -6,13 +6,6 @@
         "valor": "10.99",
         "qtde": "679"
     },
-    "Monster": {
-        "nome": "Monster",
-        "categoria": "Energético",
-        "volume": "300",
-        "valor": "17.67",
-        "qtde": "55"
-    },
     "Limão": {
         "nome": "Limão",
         "categoria": "Suco",
