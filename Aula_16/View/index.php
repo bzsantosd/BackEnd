@@ -38,11 +38,18 @@ if ($_SERVER ['REQUEST_METHOD'] === 'POST'){
 
 // 3. Leitura dos Dados e Lógica de Carregamento para Edição (GET)
 $bebidas = $controller->ler();
-$bebida_editando_nome = $_GET['editar'] ?? null; 
+// CORREÇÃO: mudei de 'editar' para 'atualizar' para corresponder ao link
+$bebida_editando_nome = $_GET['atualizar'] ?? null; 
 $bebida_selecionada = null;
 
-if ($bebida_editando_nome && isset($bebidas[$bebida_editando_nome])) {
-    $bebida_selecionada = $bebidas[$bebida_editando_nome];
+if ($bebida_editando_nome && !empty($bebidas)) {
+    // Como ler() retorna um array indexado, precisamos buscar pela bebida
+    foreach ($bebidas as $bebida) {
+        if ($bebida->getNome() === $bebida_editando_nome) {
+            $bebida_selecionada = $bebida;
+            break;
+        }
+    }
 }
 
 // Variáveis para preencher o formulário
@@ -60,12 +67,16 @@ $botao_cor = $bebida_selecionada ? 'black' : '#005c00';
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciamento de Bebidas</title>
     <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
         .container {
             display: flex;
             gap: 20px;
@@ -74,9 +85,10 @@ $botao_cor = $bebida_selecionada ? 'black' : '#005c00';
         .form-area {
             flex: 1;
             padding: 20px;
-            border: 1px solid #ccc;
+            border: 2px solid #ccc;
             border-radius: 8px;
             margin-bottom: 20px;
+            background-color: #f9f9f9;
         }
         .list-area {
             flex: 2;
@@ -87,6 +99,19 @@ $botao_cor = $bebida_selecionada ? 'black' : '#005c00';
             display: block;
             width: 100%;
             box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f0f0;
         }
     </style>
 </head>
@@ -95,14 +120,14 @@ $botao_cor = $bebida_selecionada ? 'black' : '#005c00';
     
     <div class="container">
         
-        <div class="form-area" style="border-color: <?php echo $bebida_selecionada ? 'black' : '#ccc'; ?>;">
+        <div class="form-area" style="border-color: <?php echo $bebida_selecionada ? '#1c4c96' : '#ccc'; ?>;">
             <h2><?php echo $form_titulo; ?></h2>
             <form method="POST">
                 <input type="hidden" name="acao" value="<?php echo $form_acao; ?>">
                 <?php echo $nome_antigo_input; ?>
                 
                 <label>Nome:</label>
-                <input type="text" name="nome" placeholder="Nome de bebida:" value="<?php echo htmlspecialchars($nome_valor); ?>" required>
+                <input type="text" name="nome" placeholder="Nome da bebida:" value="<?php echo htmlspecialchars($nome_valor); ?>" required>
                 
                 <label>Categoria:</label>
                 <select name="categoria" required>
@@ -115,24 +140,27 @@ $botao_cor = $bebida_selecionada ? 'black' : '#005c00';
                 </select>
                 
                 <label>Volume:</label>
-                <input type="text" name="Volume" placeholder="Volume (ex:300ml):" value="<?php echo htmlspecialchars($volume_valor); ?>" required>
+                <input type="text" name="Volume" placeholder="Volume (ex: 300ml):" value="<?php echo htmlspecialchars($volume_valor); ?>" required>
                 
                 <label>Valor (R$):</label>
                 <input type="number" name="Valor" step="0.01" placeholder="Valor em Reais (R$):" value="<?php echo htmlspecialchars($valor_valor); ?>" required>
                 
                 <label>Quantidade em estoque:</label>
-                <input type="number" name="qtde" placeholder="Quatidade em estoque:" value="<?php echo htmlspecialchars($qtde_valor); ?>" required>
+                <input type="number" name="qtde" placeholder="Quantidade em estoque:" value="<?php echo htmlspecialchars($qtde_valor); ?>" required>
                 
-                <button type="submit" style="padding: 10px 20px; background-color: <?php echo $botao_cor; ?>; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;"><?php echo $botao_texto; ?></button>
+                <button type="submit" style="padding: 10px 20px; background-color: <?php echo $botao_cor; ?>; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold;"><?php echo $botao_texto; ?></button>
                 
                 <?php if ($bebida_selecionada): ?>
-                    <a href="index.php" style="padding: 10px; background-color: #ccc; color: black; border-radius: 4px; cursor: pointer; text-decoration: none;">Cancelar Edição</a>
+                    <a href="index.php" style="display: inline-block; margin-left: 10px; padding: 10px 20px; background-color: #ccc; color: black; border-radius: 4px; cursor: pointer; text-decoration: none; font-weight: bold;">Cancelar Edição</a>
                 <?php endif; ?>
             </form>
         </div>
 
         <div class="list-area">
             <h2>Bebidas Cadastradas</h2>
+            <?php if (empty($bebidas)): ?>
+                <p>Nenhuma bebida cadastrada ainda.</p>
+            <?php else: ?>
             <table border="1" width="100%">
                 <thead>
                     <tr>
@@ -146,7 +174,7 @@ $botao_cor = $bebida_selecionada ? 'black' : '#005c00';
                 </thead>
                 <tbody>
                     <?php foreach ($bebidas as $bebida): ?>
-                    <tr>
+                    <tr style="<?php echo ($bebida_selecionada && $bebida->getNome() === $bebida_selecionada->getNome()) ? 'background-color: #e3f2fd;' : ''; ?>">
                         <td><?php echo htmlspecialchars($bebida->getNome()); ?></td>
                         <td><?php echo htmlspecialchars($bebida->getCategoria()); ?></td>
                         <td><?php echo htmlspecialchars($bebida->getVolume()); ?></td>
@@ -154,20 +182,20 @@ $botao_cor = $bebida_selecionada ? 'black' : '#005c00';
                         <td><?php echo htmlspecialchars($bebida->getQtde()); ?></td>
                         
                         <td>
-                            <a href="?editar=<?php echo urlencode($bebida->getNome()); ?>" style="background-color: #1c4c96; color: white; border-radius: 4px; cursor: pointer; padding: 5px 8px; text-decoration: none; margin-right: 5px;">Editar</a>
+                            <a href="?atualizar=<?php echo urlencode($bebida->getNome()); ?>" style="background-color: #1c4c96; color: white; border-radius: 4px; cursor: pointer; padding: 5px 10px; text-decoration: none; margin-right: 5px;">Editar</a>
                             
-                            <form method="POST" style="display: inline;">
+                            <form method="POST" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta bebida?');">
                                 <input type="hidden" name="acao" value="deletar">
                                 <input type="hidden" name="nome" value="<?php echo htmlspecialchars($bebida->getNome()); ?>">
-                                <button type="submit" style="background-color: #bb0b0b; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 5px;">Excluir</button>
+                                <button type="submit" style="background-color: #bb0b0b; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 5px 10px;">Excluir</button>
                             </form>
                         </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            <?php endif; ?>
         </div>
     </div>
 </body>
-</html> 
-
+</html>

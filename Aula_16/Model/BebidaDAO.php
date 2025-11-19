@@ -1,7 +1,9 @@
 <?php
 
 namespace Aula_16;
+
 use PDO;
+
 require_once 'Bebida.php';
 require_once 'Connection.php';
 
@@ -96,4 +98,3 @@ class BebidaDAO {
         return null;
     }
 }
-?>

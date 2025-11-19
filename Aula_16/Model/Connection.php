@@ -9,22 +9,23 @@ class Connection {
         try {
             //Ajuste se usuário e senha aqui
             $host = 'localhost';
-            $dbname = 'projeto_bebidas2';
+            $dbname = 'SENAI';
             $user = 'root';
-            $pass = '1234';
+            $pass = 'senaisp';
 
 
             //conecta ao MySQL
             self::$instance = new PDO(
                 "mysql:host=$host;charset=utf8",
-                $user, 
+                $user,
                 $pass
             );
 
             self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             //cria o banco de dados se não existir
-            self::$instance->exec("CREATE DATABASE IF NOT EXISTS $dbname CREATE CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci");
+            // CORREÇÃO DA SINTAXE SQL:
+            self::$instance->exec("CREATE DATABASE IF NOT EXISTS $dbname CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci");
             self::$instance->exec("USE $dbname");
 
         } catch (PDOException $e) {
@@ -34,4 +35,3 @@ class Connection {
     return self::$instance;
     }
 }
-?>
