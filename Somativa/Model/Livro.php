@@ -1,6 +1,7 @@
 <?php
 namespace BibliotecaEscolar;
 
+//Esta classe representa o livro como objeto
 class Livro {
     private $titulo;
     private $autor;
@@ -8,6 +9,7 @@ class Livro {
     private $genero;
     private $quantidade;
 
+//Construtor: Inicializa classe objeto com os dados do livro
     public function __construct($titulo, $autor, $ano, $genero, $quantidade) {
         $this->titulo = $titulo;
         $this->autor = $autor;
@@ -16,7 +18,7 @@ class Livro {
         $this->quantidade = $quantidade;
     }
 
-    // Getters
+// Getters: Retornam valores dos atributos
     public function getTitulo() {
         return $this->titulo;
     }
@@ -37,7 +39,7 @@ class Livro {
         return $this->quantidade;
     }
 
-    // Setters
+// Setters: Modificam os valores 
     public function setTitulo($titulo) {
         $this->titulo = $titulo;
         return $this;

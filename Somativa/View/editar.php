@@ -2,24 +2,23 @@
 
 namespace BibliotecaEscolar;
 
-require_once __DIR__. '\\..\\Controller\\LivroController.php'; // ajustado para Windows
+require_once __DIR__. '\\..\\Controller\\LivroController.php'; 
+$controller = new LivroController(); 
 
-$controller = new LivroController(); // instancia o controller
+$livroParaEditar = null; 
+$tituloOriginal = ''; 
 
-$livroParaEditar = null; // livro que sera editado
-$tituloOriginal = '';  // titulo original do livro
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['acao'] ?? '') === 'atualizar') { // verifica se o formulario foi submetido para atualizar
-    
-    $tituloOriginal = $_POST['tituloOriginal'] ?? ''; // titulo original do livro
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['acao'] ?? '') === 'atualizar') { 
+    $tituloOriginal = $_POST['tituloOriginal'] ?? ''; 
     $autor          = $_POST['autor'] ?? '';
     $ano            = $_POST['ano'] ?? 0; 
     $genero         = $_POST['genero'] ?? '';  
     $quantidade     = $_POST['quantidade'] ?? 0;
 
-    $controller->editar($tituloOriginal, $autor, $ano, $genero, $quantidade); // chama o metodo editar do controller
+    $controller->editar($tituloOriginal, $autor, $ano, $genero, $quantidade); 
     
-    header('Location: index.php'); // redireciona para a lista apos a edicao
+    header('Location: index.php'); 
     exit();
 }
 
@@ -27,9 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['titulo'])) {
     $tituloOriginal = $_POST['titulo'];
     $livroParaEditar = $controller->buscar($tituloOriginal);
     
-    // Se o livro não for encontrado, algo deu errado, redireciona.
-    if (!$livroParaEditar) { // livro nao encontrado
-        header('Location: index.php'); // redireciona
+    if (!$livroParaEditar) { 
+        header('Location: index.php'); 
         exit();
     }
 } else {
@@ -37,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['titulo'])) {
     exit();
 }
 
-// Definição dos Gêneros Literários
 $generos = ["Ficção", "Romance", "Aventura", "Fantasia", "Suspense", "Terror", "Biografia", "História", "Ciência", "Poesia", "Drama", "Comédia"];
 
 ?>
@@ -49,163 +46,83 @@ $generos = ["Ficção", "Romance", "Aventura", "Fantasia", "Suspense", "Terror",
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Livro - Biblioteca Escolar</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #616161 100%, #ffffff 0%);
-            padding: 20px;
-            min-height: 100vh;
+            font-family: sans-serif;
+            background-color: #f0f2f5;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
         
         .container {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 500px;
             width: 100%;
-            padding: 40px;
+            padding: 30px;
         }
         
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
-            color: #333;
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-        
-        .header .book-icon {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: #333; font-size: 1.8em; margin: 0; }
         
         .book-title {
-            background: linear-gradient(135deg, #616161 100%, #ffffff 0%);
+            background: #444;
             color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 30px;
+            padding: 10px;
+            border-radius: 4px;
             text-align: center;
-            font-size: 1.3em;
             font-weight: bold;
-        }
-        
-        form { 
-            background: #f9f9f9; 
-            padding: 30px; 
-            border-radius: 12px;
-            border: 2px solid #667eea;
-        }
-        
-        .form-group {
             margin-bottom: 20px;
         }
         
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 600;
-            font-size: 0.95em;
-        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #555; font-weight: bold; font-size: 0.9em; }
         
-        .label-disabled {
-            color: #999;
-        }
-        
-        input[type="text"], input[type="number"], select {
+        input, select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            background: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
         
-        input[type="text"]:focus, input[type="number"]:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        input:disabled {
-            background-color: #f0f0f0;
-            color: #999;
-            cursor: not-allowed;
-            border-color: #e0e0e0;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
+        input:disabled { background: #e9ecef; color: #6c757d; }
         
         button[type="submit"] {
-            flex: 1;
-            padding: 14px 20px; 
-            background: linear-gradient(135deg, #616161 100%, #ffffff 0%);
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
+            width: 100%;
+            padding: 12px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 1.05em;
-            transition: all 0.3s ease;
+            font-size: 1em;
+            margin-top: 10px;
         }
-        
-        button[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        button[type="submit"]:active {
-            transform: translateY(0);
-        }
+        button[type="submit"]:hover { background: #1a252f; }
         
         .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 24px;
-            background-color: #757575;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            display: block;
             text-align: center;
-            width: 100%;
+            margin-top: 15px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9em;
         }
-        
-        .back-link:hover {
-            background-color: #616161;
-            transform: translateY(-2px);
-        }
+        .back-link:hover { text-decoration: underline; }
         
         .info-box {
             background: #e3f2fd;
-            border-left: 4px solid #1976d2;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 25px;
-            font-size: 0.9em;
-            color: #555;
-        }
-        
-        .info-box strong {
-            color: #1976d2;
+            color: #00555A;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-bottom: 20px;
+            border-left: 4px solid #008080;
         }
     </style>
 </head>
@@ -240,7 +157,7 @@ $generos = ["Ficção", "Romance", "Aventura", "Fantasia", "Suspense", "Terror",
             
             <div class="form-group">
                 <label for="ano">Ano de Publicação:</label>
-                <input type="number" name="ano" id="ano" min="1000" max="<?php echo date('Y'); ?>" value="<?php echo htmlspecialchars($livroParaEditar->getAno()); ?>" placeholder="Ex: 2023" required>
+                <input type="number" name="ano" id="ano" min="1000" max="<?php echo date('Y'); ?>" value="<?php echo htmlspecialchars($livroParaEditar->getAno()); ?>" placeholder="Ex: 2024" required>
             </div>
 
             <div class="form-group">

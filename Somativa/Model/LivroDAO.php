@@ -6,9 +6,11 @@ use PDO;
 require_once 'Livro.php';
 require_once 'Connection.php';
 
+//DAO - Responsável por todas as operações no banco
 class LivroDAO {
     private $conn;
 
+    //Criação da Tabela
     public function __construct() {
         $this->conn = Connection::getInstance();
 
@@ -25,7 +27,7 @@ class LivroDAO {
         ");
     }
 
-    // CREATE
+    // CREATE - Insere Livro
     public function criarLivro(Livro $livro) {
         $stmt = $this->conn->prepare("
             INSERT INTO livros (titulo, autor, ano, genero, quantidade)
@@ -40,7 +42,7 @@ class LivroDAO {
         ]);
     }
 
-    // READ
+    // READ - Lista Livros
     public function lerLivros() {
         $stmt = $this->conn->query("SELECT * FROM livros ORDER BY titulo");
         $result = [];
@@ -56,7 +58,7 @@ class LivroDAO {
         return $result;
     }
 
-    // UPDATE
+    // UPDATE - Atualiza Livro
     public function atualizarLivro($tituloOriginal, $novoTitulo, $autor, $ano, $genero, $quantidade) {
         $stmt = $this->conn->prepare("
             UPDATE livros
@@ -73,13 +75,13 @@ class LivroDAO {
         ]);
     }
 
-    // DELETE
+    // DELETE - Excluir Livro
     public function excluirLivro($titulo) {
         $stmt = $this->conn->prepare("DELETE FROM livros WHERE titulo = :titulo");
         $stmt->execute([':titulo' => $titulo]);
     }
 
-    // BUSCAR POR TÍTULO
+    // BUSCA - Encontrar Livro Específico
     public function buscarPorTitulo($titulo) {
         $stmt = $this->conn->prepare("SELECT * FROM livros WHERE titulo = :titulo LIMIT 1");
         $stmt->execute([':titulo' => $titulo]);

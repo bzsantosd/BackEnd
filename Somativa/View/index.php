@@ -7,74 +7,53 @@ use BibliotecaEscolar\LivroController;
 require_once __DIR__. '\\..\\Controller\\LivroController.php';
 $controller = new LivroController();
 
-// 1. Definição dos Gêneros Literários
-$generos = [
-    "Romance",
-    "Ficção Científica",
-    "Fantasia",
-    "Terror",
-    "Suspense",
-    "Aventura",
-    "Biografia",
-    "História",
-    "Poesia",
-    "Drama",
-    "Comédia",
-    "Autoajuda",
-    "Técnico",
-    "Infantil",
-    "Juvenil"
-];
+$generos = ["Romance", "Ficção Científica", "Fantasia", "Terror", "Suspense", "Aventura", "Biografia", "História", "Poesia", "Drama", "Comédia", "Autoajuda", "Técnico", "Infantil", "Juvenil"];
 
-// Variável para feedback de sucesso
+// 1. Inicializa a variável
 $mensagem_sucesso = '';
 
-// 2. Processamento das Ações POST (Criar, Deletar, Atualizar)
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $acao = $_POST['acao'] ?? '';
-    
-    if ($acao === 'criar') {
-        try {
-            $controller->criar(
-                $_POST['titulo'],
-                $_POST['autor'],
-                $_POST['ano'],
-                $_POST['genero'],
-                $_POST['quantidade']
-            );
-            $mensagem_sucesso = 'Livro cadastrado com sucesso!';
-        } catch (\Exception $e) {
-            $mensagem_sucesso = 'Erro ao cadastrar livro. Verifique se o título já existe.';
-        }
-    } elseif ($acao === 'deletar') {
-        $controller->deletar($_POST['titulo']);
-        $mensagem_sucesso = 'Livro excluído com sucesso!';
-    } elseif ($acao === 'atualizar') { 
-        try {
-            $controller->atualizar(
-                $_POST['titulo_antigo'],
-                $_POST['titulo'],
-                $_POST['autor'],
-                $_POST['ano'],
-                $_POST['genero'],
-                $_POST['quantidade']
-            );
-            $mensagem_sucesso = 'Livro atualizado com sucesso!';
-        } catch (\Exception $e) {
-            $mensagem_sucesso = 'Erro ao atualizar livro.';
-        }
-        // Redireciona para limpar o estado de edição
-        header('Location: index.php?msg=' . urlencode($mensagem_sucesso));
-        exit;
-    }
-}
-
-// Captura mensagem de sucesso da URL (após redirecionamento)
+// 2. Verifica se chegou alguma mensagem via GET (pela URL)
 if (isset($_GET['msg'])) {
     $mensagem_sucesso = $_GET['msg'];
 }
 
-// 3. Leitura dos Dados e Lógica de Carregamento para Edição (GET)
+// 3. Processamento das Ações POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $acao = $_POST['acao'] ?? '';
+    $msg_temp = ''; // Variável temporária para a mensagem
+    
+    if ($acao === 'criar') {
+        try {
+            $controller->criar($_POST['titulo'], $_POST['autor'], $_POST['ano'], $_POST['genero'], $_POST['quantidade']);
+            $msg_temp = 'Livro cadastrado com sucesso!';
+        } catch (\Exception $e) {
+            $msg_temp = 'Erro ao cadastrar livro. Verifique se o título já existe.';
+        }
+    } elseif ($acao === 'deletar') {
+        try {
+            $controller->deletar($_POST['titulo']);
+            $msg_temp = 'Livro excluído com sucesso!';
+        } catch (\Exception $e) {
+            $msg_temp = 'Erro ao excluir o livro.';
+        }
+    } elseif ($acao === 'atualizar') { 
+        try {
+            $controller->atualizar($_POST['titulo_antigo'], $_POST['titulo'], $_POST['autor'], $_POST['ano'], $_POST['genero'], $_POST['quantidade']);
+            $msg_temp = 'Livro atualizado com sucesso!';
+        } catch (\Exception $e) {
+            $msg_temp = 'Erro ao atualizar livro.';
+        }
+    }
+
+    // REDIRECIONAMENTO COM A MENSAGEM
+    // Isso limpa o POST e exibe a mensagem via GET
+    if ($msg_temp) {
+        header('Location: index.php?msg=' . urlencode($msg_temp));
+        exit;
+    }
+}
+
+// 4. Carregamento dos dados (após redirecionamento ou carregamento normal)
 $livros = $controller->ler();
 $livro_editando_titulo = $_GET['atualizar'] ?? null; 
 $livro_selecionado = null;
@@ -88,7 +67,6 @@ if ($livro_editando_titulo && !empty($livros)) {
     }
 }
 
-// Variáveis para preencher o formulário
 $form_acao = $livro_selecionado ? 'atualizar' : 'criar';
 $form_titulo = $livro_selecionado ? 'Editar Livro: ' . htmlspecialchars($livro_selecionado->getTitulo()) : 'Cadastrar Novo Livro';
 $titulo_valor = $livro_selecionado ? $livro_selecionado->getTitulo() : '';
@@ -98,7 +76,7 @@ $genero_valor = $livro_selecionado ? $livro_selecionado->getGenero() : '';
 $quantidade_valor = $livro_selecionado ? $livro_selecionado->getQuantidade() : '';
 $titulo_antigo_input = $livro_selecionado ? '<input type="hidden" name="titulo_antigo" value="' . htmlspecialchars($livro_selecionado->getTitulo()) . '">' : '';
 $botao_texto = $livro_selecionado ? 'Salvar Edição' : 'Cadastrar';
-$botao_cor = $livro_selecionado ? '#1c4c96' : '#005c00';
+$botao_cor = $livro_selecionado ? '#00555A' : '#008080';
 
 ?>
 
@@ -109,254 +87,61 @@ $botao_cor = $livro_selecionado ? '#1c4c96' : '#005c00';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Livros - Biblioteca Escolar</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        body { font-family: sans-serif; background-color: #ecf0f1; margin: 0; padding: 20px; color: #333; }
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 20px;
-            background: linear-gradient(135deg, #616161 100%, #ffffff 0%);
-            min-height: 100vh;
-        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { margin: 0; color: #333; }
         
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-        
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            gap: 20px;
-            flex-direction: column;
-        }
+        .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
         
         .mensagem-sucesso {
-            background-color: #005c00;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: bold;
-            animation: slideDown 0.5s ease;
+            background: #00555A; color: white; padding: 15px; border-radius: 4px; text-align: center;
+            font-weight: bold; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            /* Animação simples */
+            animation: fadeIn 0.5s ease-in-out;
         }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        .form-area {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+
+        .form-area, .list-area {
+            background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
+        .form-area.editing { border: 2px solid #00555A; }
+
+        h2 { margin-top: 0; font-size: 1.5em; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
         
-        .form-area.editing {
-            border: 3px solid #616161;
-            box-shadow: 0 8px 32px rgba(28, 76, 150, 0.3);
+        input, select {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;
         }
-        
-        .form-area h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.8em;
+
+        button, .btn {
+            padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; color: white;
+            font-size: 0.95em; text-decoration: none; display: inline-block;
         }
+        button[type="submit"] { background-color: var(--btn-color, #6c757d); }
+        button[type="submit"]:hover { opacity: 0.9; }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 600;
-        }
-        
-        input[type="text"], 
-        input[type="number"], 
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-        
-        input[type="text"]:focus, 
-        input[type="number"]:focus, 
-        select:focus {
-            outline: none;
-            border-color: #555;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        button[type="submit"], .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        button[type="submit"] {
-            background-color: var(--btn-color, #005c00);
-            color: white;
-        }
-        
-        button[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        
-        .btn-cancelar {
-            background-color: #757575;
-            color: white;
-        }
-        
-        .btn-cancelar:hover {
-            background-color: #616161;
-        }
-        
-        .list-area {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-        
-        .list-area h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-        
-        thead {
-            background: linear-gradient(135deg, #616161 100%, #ffffff 0%);
-            color: white;
-        }
-        
-        th, td {
-            padding: 15px;
-            text-align: left;
-        }
-        
-        th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.9em;
-            letter-spacing: 0.5px;
-        }
-        
-        tbody tr {
-            border-bottom: 1px solid #e0e0e0;
-            transition: background-color 0.3s;
-        }
-        
-        tbody tr:hover {
-            background-color: #f5f5f5;
-        }
-        
-        tbody tr.editing {
-            background-color: #e3f2fd !important;
-        }
-        
-        .btn-editar {
-            background-color: #1c4c96;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 0.9em;
-            margin-right: 5px;
-            display: inline-block;
-            transition: background-color 0.3s;
-        }
-        
-        .btn-editar:hover {
-            background-color: #153a6f;
-        }
-        
-        .btn-excluir {
-            background-color: #d32f2f;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.3s;
-        }
-        
-        .btn-excluir:hover {
-            background-color: #b71c1c;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-        
-        .empty-state p {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-        
+        .btn-cancelar { background-color: #7f8c8d; margin-left: 10px; }
+        .btn-editar { background-color: #008080; padding: 6px 12px; font-size: 0.85em; }
+        .btn-excluir { background-color: #7f8c8d; padding: 6px 12px; font-size: 0.85em; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; background: #f8f9fa; padding: 12px; font-weight: 600; color: #555; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background-color: #f9f9f9; }
+        tr.editing { background-color: #eaf2f8; }
+
+        .empty-state { text-align: center; color: #7f8c8d; padding: 20px; }
+
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-            
-            table {
-                font-size: 0.9em;
-            }
-            
-            th, td {
-                padding: 10px;
-            }
+            th, td { padding: 8px; font-size: 0.9em; }
         }
     </style>
 </head>
@@ -368,10 +153,18 @@ $botao_cor = $livro_selecionado ? '#1c4c96' : '#005c00';
     
     <div class="container">
         
-        <?php if ($mensagem_sucesso): ?>
-        <div class="mensagem-sucesso">
-            <?php echo htmlspecialchars($mensagem_sucesso); ?>
-        </div>
+        <?php if (!empty($mensagem_sucesso)): ?>
+            <div class="mensagem-sucesso">
+                <?php echo htmlspecialchars($mensagem_sucesso); ?>
+            </div>
+            <script>
+                // Remove o parâmetro 'msg' da URL visualmente sem recarregar
+                if (window.history.replaceState) {
+                    const url = new URL(window.location);
+                    url.searchParams.delete('msg');
+                    window.history.replaceState(null, '', url);
+                }
+            </script>
         <?php endif; ?>
         
         <div class="form-area <?php echo $livro_selecionado ? 'editing' : ''; ?>">
@@ -452,9 +245,9 @@ $botao_cor = $livro_selecionado ? '#1c4c96' : '#005c00';
                         <td><?php echo htmlspecialchars($livro->getGenero()); ?></td>
                         <td><?php echo htmlspecialchars($livro->getQuantidade()); ?></td>
                         <td>
-                            <a href="?atualizar=<?php echo urlencode($livro->getTitulo()); ?>" class="btn-editar">Editar</a>
+                            <a href="?atualizar=<?php echo urlencode($livro->getTitulo()); ?>" class="btn-editar" style="text-decoration: none; color: white; background-color: #00555A; padding: 6px 12px; border-radius: 4px; border: none; display: inline-block; font-family: sans-serif;">Editar</a>
                             
-                            <form method="POST" style="display: inline;" onsubmit="return confirm('Tem certeza que deseja excluir o livro \'<?php echo htmlspecialchars($livro->getTitulo()); ?>\'?');">
+                            <form method="POST" style="display: inline;">
                                 <input type="hidden" name="acao" value="deletar">
                                 <input type="hidden" name="titulo" value="<?php echo htmlspecialchars($livro->getTitulo()); ?>">
                                 <button type="submit" class="btn-excluir">Excluir</button>
